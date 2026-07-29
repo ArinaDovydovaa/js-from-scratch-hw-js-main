@@ -4,11 +4,19 @@
  */
 
 function isNumeric(str) {
-  // your code
+  if (typeof str !== 'string') {
+    return false;
+  }
+  const trimmedStr = str.trim();
+
+  if (trimmedStr === '') {
+    return false;
+  }
+  return !isNaN(trimmedStr) && isFinite(trimmedStr) && trimmedStr !== '';
 }
 
-// console.log(isNumeric("123")) // Ожидаемый результат: true
-// console.log(isNumeric("12.3")) // Ожидаемый результат: true
-// console.log(isNumeric("123abc")) // Ожидаемый результат: false
-// console.log(isNumeric("abc")) // Ожидаемый результат: false
-// console.log(isNumeric(" ")) // Ожидаемый результат: false
+console.log(isNumeric("123")) // Ожидаемый результат: true
+console.log(isNumeric("12.3")) // Ожидаемый результат: true
+console.log(isNumeric("123abc")) // Ожидаемый результат: false
+console.log(isNumeric("abc")) // Ожидаемый результат: false
+console.log(isNumeric(" ")) // Ожидаемый результат: false
