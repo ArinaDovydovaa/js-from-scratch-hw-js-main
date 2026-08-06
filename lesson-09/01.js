@@ -1,17 +1,27 @@
 /*
-  Изучите файл index.html (секцию "Урок 8"). Разметка уже написано - нужно добавить только js-код.
+  Изучите файл index.html (секцию "Урок 8").
+   Разметка уже написано - нужно добавить только js-код.
 
-  Функционал магазина питомцев почти готов. Не хватает возможности добавлять питомцев в корзину.
-  Ваша задача написать обработчик события, который будет добавлять питомцев в корзину.
+  Функционал магазина питомцев почти готов. Не хватает возможности добавлять
+  питомцев в корзину.
+  Ваша задача написать обработчик события, который будет добавлять питомцев в
+  корзину.
 
   1. При клике на кнопку с питомцем, id питомца должен добавляться в массив cart.
-  2. После добавления питомца в корзину, необходимо вызвать функцию updateCartDisplay (она обновит отображение корзины).
-  3. В корзину можно добавить не более 3 питомцев. Если пользователь пытается добавить больше, то в messageBox должен появится текст: 'Вы не можете добавить более 3 питомцев'
+  2. После добавления питомца в корзину, необходимо вызвать
+   функцию updateCartDisplay (она обновит отображение корзины).
+  3. В корзину можно добавить не более 3 питомцев.
+   Если пользователь пытается добавить больше, то в messageBox должен
+  появится текст: 'Вы не можете добавить более 3 питомцев'
 
-  ❕❕❕ Представленный в задании код не следует изменять. Требуется только дописать обработчик события.
+  ❕❕❕ Представленный в задании код не следует изменять.
+  Требуется только дописать обработчик события.
 
-  🧙 Подсказка: используй делегирование - будет достаточно одного обработчика событий на контейнере
-  🧙 Подсказка: если пользователь кликнет по кнопке с питомцев, id питомца можно будет получить из объекта события (event.target.id)
+  🧙 Подсказка: используй делегирование -
+  будет достаточно одного обработчика событий на контейнере
+  🧙 Подсказка: если пользователь кликнет по кнопке с питомцев,
+   id питомца можно будет получить из объекта события
+   (event.target.id)
 */
 
 const PETS = [
@@ -29,42 +39,77 @@ const PETS = [
   { id: 'frog', title: '🐸' },
 ]
 
-const cart = []
+// Находим контейнер магазина питомцев
+const petShop = document.querySelector('.pet-shop');
 
-const petShop = document.querySelector('.pet-shop')
-const cartList = document.getElementById('cart-list')
-const messageBox = document.getElementById('message-box')
-const clearCartButton = document.getElementById('clear-cart-button')
+// Создаем HTML-разметку для всех питомцев
+// Для каждого питомца из массива PETS создаем кнопку с его эмодзи
+// Важно: id кнопки совпадает с id питомца (это пригодится для добавления в корзину)
+petShop.innerHTML = PETS.map(pet => `
+    <button id="${pet.id}">${pet.title}</button>
+`).join('');
 
-// Рендерим кнопки для питомцев
-for (let i = 0; i < PETS.length; i++) {
-  const pet = PETS[i]
+// Массив для хранения id питомцев в корзине
+let cart = [];
 
-  const petButtonElement = document.createElement('button')
-  petButtonElement.classList.add('pet')
-  petButtonElement.id = pet.id
-  petButtonElement.textContent = pet.title
+// Получаем элемент для отображения сообщений
+const messageBox = document.getElementById('message-box');
 
-  petShop.append(petButtonElement)
-}
-
-// Обновляем отображение корзины
+// Функция для обновления отображения корзины (уже дана в задании)
 function updateCartDisplay() {
-  cartList.innerHTML = ''
-
-  for (let i = 0; i < cart.length; i++) {
-    const petId = cart[i]
-    const pet = PETS.find((item) => item.id === petId)
-    const petSpanElement = document.createElement('li')
-    petSpanElement.classList.add('pet')
-    petSpanElement.textContent = pet.title
-    cartList.append(petSpanElement)
-  }
+  const cartList = document.getElementById('cart-list');
+  // Очищаем список корзины
+  cartList.innerHTML = '';
+  // Для каждого питомца в корзине создаем элемент списка
+  cart.forEach(petId => {
+    const li = document.createElement('li');
+    // Находим полные данные питомца по id
+    const pet = PETS.find(p => p.id === petId);
+    // Отображаем эмодзи питомца
+    li.textContent = pet.title;
+    cartList.appendChild(li);
+  });
 }
 
-clearCartButton.addEventListener('click', function () {
-  cart.length = 0
-  updateCartDisplay()
-})
+// Обработчик кликов с использованием делегирования
+// Вешаем обработчик на контейнер .pet-shop, а не на каждую кнопку отдельно
+// Это эффективнее, так как обработчик один, а не 12
+petShop.addEventListener('click', function(event) {
+  // event.target - это элемент, на котором произошел клик (кнопка с питомцем)
+  // Проверяем, что клик был именно по кнопке (элементу с тегом BUTTON)
+  // Это важно, чтобы случайные клики по контейнеру не вызывали ошибку
+  if (event.target.tagName === 'BUTTON') {
+    // Получаем id питомца из id кнопки
+    // event.target.id содержит значение атрибута id кнопки
+    const petId = event.target.id;
 
-// Твой код:
+    // Проверяем, не превышен ли лимит корзины (максимум 3 питомца)
+    if (cart.length >= 3) {
+      // Если в корзине уже 3 питомца, показываем сообщение об ошибке
+      messageBox.textContent = 'Вы не можете добавить более 3 питомцев';
+      // Выходим из функции, чтобы не добавлять питомца
+      return;
+    }
+
+    // Если лимит не превышен, добавляем id питомца в массив cart
+    cart.push(petId);
+
+    // Очищаем сообщение об ошибке (если оно было)
+    messageBox.textContent = '';
+
+    // Обновляем отображение корзины, вызывая готовую функцию
+    updateCartDisplay();
+  }
+});
+
+// Обработчик для кнопки очистки корзины (уже дан в задании)
+document.getElementById('clear-cart-button').addEventListener('click', function() {
+  // Очищаем массив корзины
+  cart = [];
+  // Обновляем отображение
+  updateCartDisplay();
+  // Очищаем сообщение
+  messageBox.textContent = '';
+});
+
+

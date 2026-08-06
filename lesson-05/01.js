@@ -13,16 +13,16 @@
 `amount` к текущему количеству этого ресурса в объекте.
 */
 
-const game = {
-  resources: {
-    gold: 250,
-    lumber: 100,
-  },
-  addResource(resource,amount) {
-    if (this.resources.hasOwnProperty(resource)) {
-      this.resources[resource] += amount;
-    } else console.log("Invalid resource")
-  }
-}
-game.addResource('gold', 50);
-console.log(game.resources.gold);
+// const game = {
+//   resources: {
+//     gold: 250,
+//     lumber: 100,
+//   },
+//   addResource(resource,amount) {
+//     if (this.resources.hasOwnProperty(resource)) {
+//       this.resources[resource] += amount;
+//     } else console.log("Invalid resource")
+//   }
+// }
+// game.addResource('gold', 50);
+// console.log(game.resources.gold);

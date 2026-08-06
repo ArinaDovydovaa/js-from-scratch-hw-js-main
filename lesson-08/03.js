@@ -10,13 +10,13 @@
 * truncate("Короткая строка", 20) // Ожидаемый результат: "Короткая строка"
 */
 
-function truncate(str, maxLength) {
-  if (str.length <= maxLength) {
-    return str; }
-
-  if (str.length > maxLength) {
-    return str.slice(0, maxLength) + '...'
-  }
-}
-console.log(truncate("Вот, что мне действительно нравится в этом", 20))
-console.log(truncate("Короткая строка", 20))
+// function truncate(str, maxLength) {
+//   if (str.length <= maxLength) {
+//     return str; }
+//
+//   if (str.length > maxLength) {
+//     return str.slice(0, maxLength) + '...'
+//   }
+// }
+// console.log(truncate("Вот, что мне действительно нравится в этом", 20))
+// console.log(truncate("Короткая строка", 20))
