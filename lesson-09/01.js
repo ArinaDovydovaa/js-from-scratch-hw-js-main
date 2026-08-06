@@ -39,55 +39,57 @@ const PETS = [
   { id: 'frog', title: '🐸' },
 ]
 
-// Находим контейнер магазина питомцев
-const petShop = document.querySelector('.pet-shop');
+const cart = []
 
-// Создаем HTML-разметку для всех питомцев
-// Для каждого питомца из массива PETS создаем кнопку с его эмодзи
-// Важно: id кнопки совпадает с id питомца (это пригодится для добавления в корзину)
-petShop.innerHTML = PETS.map(pet => `
-    <button id="${pet.id}">${pet.title}</button>
-`).join('');
+const petShop = document.querySelector('.pet-shop')
+const cartList = document.getElementById('cart-list')
+const messageBox = document.getElementById('message-box')
+const clearCartButton = document.getElementById('clear-cart-button')
 
-// Массив для хранения id питомцев в корзине
-let cart = [];
+// Рендерим кнопки для питомцев
+for (let i = 0; i < PETS.length; i++) {
+  const pet = PETS[i]
 
-// Получаем элемент для отображения сообщений
-const messageBox = document.getElementById('message-box');
+  const petButtonElement = document.createElement('button')
+  petButtonElement.classList.add('pet')
+  petButtonElement.id = pet.id
+  petButtonElement.textContent = pet.title
 
-// Функция для обновления отображения корзины (уже дана в задании)
-function updateCartDisplay() {
-  const cartList = document.getElementById('cart-list');
-  // Очищаем список корзины
-  cartList.innerHTML = '';
-  // Для каждого питомца в корзине создаем элемент списка
-  cart.forEach(petId => {
-    const li = document.createElement('li');
-    // Находим полные данные питомца по id
-    const pet = PETS.find(p => p.id === petId);
-    // Отображаем эмодзи питомца
-    li.textContent = pet.title;
-    cartList.appendChild(li);
-  });
+  petShop.append(petButtonElement)
 }
 
-// Обработчик кликов с использованием делегирования
-// Вешаем обработчик на контейнер .pet-shop, а не на каждую кнопку отдельно
-// Это эффективнее, так как обработчик один, а не 12
+// Обновляем отображение корзины
+function updateCartDisplay() {
+  cartList.innerHTML = ''
+
+  for (let i = 0; i < cart.length; i++) {
+    const petId = cart[i]
+    const pet = PETS.find((item) => item.id === petId)
+    const petSpanElement = document.createElement('li')
+    petSpanElement.classList.add('pet')
+    petSpanElement.textContent = pet.title
+    cartList.append(petSpanElement)
+  }
+}
+
+clearCartButton.addEventListener('click', function () {
+  cart.length = 0
+  updateCartDisplay()
+})
+
+// Вешаем обработчик на контейнер .pet-shop (делегирование)
 petShop.addEventListener('click', function(event) {
-  // event.target - это элемент, на котором произошел клик (кнопка с питомцем)
-  // Проверяем, что клик был именно по кнопке (элементу с тегом BUTTON)
-  // Это важно, чтобы случайные клики по контейнеру не вызывали ошибку
-  if (event.target.tagName === 'BUTTON') {
-    // Получаем id питомца из id кнопки
-    // event.target.id содержит значение атрибута id кнопки
+  // Проверяем, что кликнули именно по кнопке с питомцем
+  // (у кнопок есть класс 'pet', который мы добавили при создании)
+  if (event.target.classList.contains('pet')) {
+    // Получаем id питомца из атрибута id кнопки
     const petId = event.target.id;
 
     // Проверяем, не превышен ли лимит корзины (максимум 3 питомца)
     if (cart.length >= 3) {
       // Если в корзине уже 3 питомца, показываем сообщение об ошибке
       messageBox.textContent = 'Вы не можете добавить более 3 питомцев';
-      // Выходим из функции, чтобы не добавлять питомца
+      // Прерываем выполнение функции, чтобы не добавлять питомца
       return;
     }
 
@@ -97,19 +99,7 @@ petShop.addEventListener('click', function(event) {
     // Очищаем сообщение об ошибке (если оно было)
     messageBox.textContent = '';
 
-    // Обновляем отображение корзины, вызывая готовую функцию
+    // Обновляем отображение корзины
     updateCartDisplay();
   }
 });
-
-// Обработчик для кнопки очистки корзины (уже дан в задании)
-document.getElementById('clear-cart-button').addEventListener('click', function() {
-  // Очищаем массив корзины
-  cart = [];
-  // Обновляем отображение
-  updateCartDisplay();
-  // Очищаем сообщение
-  messageBox.textContent = '';
-});
-
-
